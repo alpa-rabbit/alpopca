@@ -8,6 +8,7 @@ public record ClickCount(long value) {
     }
 
     public ClickCount add(long count) {
+        if(count < 0) throw new IllegalArgumentException("count는 양수여야 합니다");
         long validCount = Math.min(count, MAX_PER_REQUEST);
         return new ClickCount(this.value + validCount);
     }
