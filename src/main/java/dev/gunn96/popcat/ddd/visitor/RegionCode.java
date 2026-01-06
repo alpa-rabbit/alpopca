@@ -1,4 +1,6 @@
 package dev.gunn96.popcat.ddd.visitor;
 
-public class RegionCode {
+public enum RegionCode {
+    KR,
+    UNKNOWN
 }
