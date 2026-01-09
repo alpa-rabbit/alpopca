@@ -1,10 +1,12 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
 body {
-  font-family: "Pixelify Sans", sans-serif;
+  font-family: 'Pixelify Sans', sans-serif;
+  height: 100vh;
+  background-color: var(--bg);
 }
 
 @theme inline {
@@ -49,6 +51,8 @@ body {
 }
 
 :root {
+  --bg: #aea7a7;
+  --text: #000;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -118,11 +122,4 @@ body {
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
 }
-
