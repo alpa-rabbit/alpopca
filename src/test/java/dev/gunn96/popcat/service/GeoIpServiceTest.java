@@ -3,7 +3,8 @@ package dev.gunn96.popcat.service;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CountryResponse;
 import com.maxmind.geoip2.record.Country;
-import dev.gunn96.popcat.exception.GeoIpException;
+import dev.gunn96.popcat.infrastructure.geoip.MaxmindGeoIpServiceImpl;
+import dev.gunn96.popcat.support.exception.GeoIpException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +30,7 @@ class GeoIpServiceTest {
     private DatabaseReader reader;
 
     @InjectMocks
-    private GeoIpServiceImpl geoIpService;
+    private MaxmindGeoIpServiceImpl geoIpService;
 
     @Test
     @DisplayName("정상적인 IP 주소에 대해 국가 코드를 반환한다")

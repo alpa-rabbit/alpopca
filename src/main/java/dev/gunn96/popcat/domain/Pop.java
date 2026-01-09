@@ -1,5 +1,7 @@
 package dev.gunn96.popcat.domain;
 
+import dev.gunn96.popcat.domain.vo.ClickCount;
+import dev.gunn96.popcat.domain.vo.RegionCode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,23 +10,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Builder
 public class Pop {
-    private final String ipAddress;
-    private final String regionCode;
-    private final long count;
+    private final RegionCode regionCode;
+    private final ClickCount clickCount;
 
-    public static Pop createNew(String ipAddress, String regionCode) {
-        return Pop.builder()
-                .ipAddress(ipAddress)
-                .regionCode(regionCode)
-                .count(0L)
-                .build();
-    }
-
-    public Pop addCount(long additionalCount) {
-        return Pop.builder()
-                .ipAddress(this.ipAddress)
-                .regionCode(this.regionCode)
-                .count(this.count + additionalCount)
-                .build();
+    public Pop addCount(RegionCode regionCode, ClickCount clickCount) {
+        return null;
     }
 }

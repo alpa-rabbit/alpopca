@@ -1,7 +1,8 @@
 package dev.gunn96.popcat.common;
 
-import dev.gunn96.popcat.entity.VisitorPopEntity;
-import dev.gunn96.popcat.repository.VisitorPopRepository;
+import dev.gunn96.popcat.config.JpaConfig;
+import dev.gunn96.popcat.infrastructure.persistence.entity.VisitorPopEntity;
+import dev.gunn96.popcat.infrastructure.persistence.repository.VisitorPopRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;

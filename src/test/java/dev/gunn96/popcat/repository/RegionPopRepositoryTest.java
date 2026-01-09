@@ -1,7 +1,8 @@
 package dev.gunn96.popcat.repository;
 
 
-import dev.gunn96.popcat.entity.RegionPopEntity;
+import dev.gunn96.popcat.infrastructure.persistence.entity.RegionPopEntity;
+import dev.gunn96.popcat.infrastructure.persistence.repository.RegionPopRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

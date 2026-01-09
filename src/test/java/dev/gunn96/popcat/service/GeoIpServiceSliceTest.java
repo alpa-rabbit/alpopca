@@ -1,6 +1,7 @@
 package dev.gunn96.popcat.service;
 
-import dev.gunn96.popcat.exception.GeoIpException;
+import dev.gunn96.popcat.infrastructure.geoip.MaxmindGeoIpServiceImpl;
+import dev.gunn96.popcat.support.exception.GeoIpException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +11,14 @@ import org.springframework.test.context.TestPropertySource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest(classes = {GeoIpServiceImpl.class})
+@SpringBootTest(classes = {MaxmindGeoIpServiceImpl.class})
 @TestPropertySource(properties = {
         "geoip.database.path=classpath:geoip/GeoLite2-Country.mmdb"
 })
 class GeoIpServiceSliceTest {
 
     @Autowired
-    private GeoIpServiceImpl geoIpService;
+    private MaxmindGeoIpServiceImpl geoIpService;
 
     @Test
     @DisplayName("실제 GeoIP DB를 사용하여 국가 코드를 조회한다")

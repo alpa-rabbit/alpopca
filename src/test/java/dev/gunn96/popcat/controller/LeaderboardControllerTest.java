@@ -1,10 +1,11 @@
 package dev.gunn96.popcat.controller;
 
-import dev.gunn96.popcat.security.SecurityConfig;
-import dev.gunn96.popcat.security.jwt.JwtAuthenticationProvider;
-import dev.gunn96.popcat.security.jwt.JwtProvider;
-import dev.gunn96.popcat.service.GeoIpService;
-import dev.gunn96.popcat.service.LeaderboardService;
+import dev.gunn96.popcat.config.SecurityConfig;
+import dev.gunn96.popcat.infrastructure.security.jwt.JwtAuthenticationProvider;
+import dev.gunn96.popcat.infrastructure.security.jwt.JwtProvider;
+import dev.gunn96.popcat.infrastructure.web.LeaderboardController;
+import dev.gunn96.popcat.infrastructure.geoip.GeoIpService;
+import dev.gunn96.popcat.application.LeaderboardService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
