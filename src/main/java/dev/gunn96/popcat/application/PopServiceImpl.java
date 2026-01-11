@@ -1,13 +1,11 @@
 package dev.gunn96.popcat.application;
 
-import dev.gunn96.popcat.domain.Pop;
-import dev.gunn96.popcat.domain.vo.ClickCount;
-import dev.gunn96.popcat.domain.vo.RegionCode;
-import dev.gunn96.popcat.infrastructure.persistence.repository.RegionPopRepository;
-import dev.gunn96.popcat.infrastructure.persistence.repository.VisitorPopRepository;
-import dev.gunn96.popcat.infrastructure.security.jwt.JwtProvider;
+import dev.gunn96.popcat.application.dto.PopCommand;
+import dev.gunn96.popcat.domain.RegionStats;
+import dev.gunn96.popcat.infrastructure.persistence.entity.RegionStatsEntity;
+import dev.gunn96.popcat.infrastructure.persistence.repository.RegionStatsRepository;
+import dev.gunn96.popcat.support.exception.RegionNotFoundException;
 import dev.gunn96.popcat.support.mapper.PopMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,31 +17,29 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @RequiredArgsConstructor
 public class PopServiceImpl implements PopService {
-    private final VisitorPopRepository visitorPopRepository;
-    private final RegionPopRepository regionPopRepository;
-    private final JwtProvider jwtProvider;
     private final PopMapper popMapper;
+    private final RegionStatsRepository regionStatsRepository;
 
     @Value("${popcat.max-pops-append-per-visitor:800}")
     private long maxPopsAppendPerVisitor;
 
     @Transactional
     @Override
-    public Pop addPops(RegionCode regionCode,ClickCount clickCount) {
-        updateRegionPop(regionCode, clickCount);
+    public RegionStats addPops(PopCommand popCommand) {
+        //엔티티 조회
+        RegionStatsEntity entity = regionStatsRepository
+                .findByRegionCode(popCommand.regionCode().name())
+                .orElseThrow(() -> new RegionNotFoundException(popCommand.regionCode()));
+
+        // 매핑
+
+        // 도메인 로직 실행
+
+        // 저장
+
+        //결과 반환
         return null;
     }
 
-
-    // 지역 팝 업데이트
-    private void updateRegionPop(RegionCode regionCode, ClickCount validCount) {
-        Pop pop = regionPopRepository
-                .findById(regionCode.getCode())
-                .map(popMapper::from)
-                .orElseThrow(EntityNotFoundException::new);
-
-        Pop updatedPop = pop.addCount(regionCode, validCount);
-        regionPopRepository.save(popMapper.toRegionEntity(updatedPop));
-    }
 
 }

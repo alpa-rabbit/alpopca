@@ -2,7 +2,7 @@ package dev.gunn96.popcat.infrastructure.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.gunn96.popcat.support.ApiResponse;
-import dev.gunn96.popcat.infrastructure.web.dto.PopResponse;
+import dev.gunn96.popcat.infrastructure.web.dto.response.PopResponse;
 import dev.gunn96.popcat.infrastructure.geoip.GeoIpService;
 import dev.gunn96.popcat.support.IpAddressExtractor;
 import io.jsonwebtoken.ExpiredJwtException;

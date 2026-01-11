@@ -1,7 +1,7 @@
 package dev.gunn96.popcat.infrastructure.web;
 
 import dev.gunn96.popcat.support.ApiResponse;
-import dev.gunn96.popcat.infrastructure.web.dto.LeaderboardResponse;
+import dev.gunn96.popcat.infrastructure.web.dto.response.LeaderboardResponse;
 import dev.gunn96.popcat.application.LeaderboardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

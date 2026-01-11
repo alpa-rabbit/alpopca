@@ -1,9 +1,7 @@
 package dev.gunn96.popcat.application;
 
-import dev.gunn96.popcat.infrastructure.web.dto.LeaderboardResponse;
-import dev.gunn96.popcat.infrastructure.web.dto.RegionPopResponse;
-import dev.gunn96.popcat.infrastructure.persistence.entity.RegionPopEntity;
-import dev.gunn96.popcat.infrastructure.persistence.repository.RegionPopRepository;
+import dev.gunn96.popcat.infrastructure.web.dto.response.LeaderboardResponse;
+import dev.gunn96.popcat.infrastructure.web.dto.response.RegionPopResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

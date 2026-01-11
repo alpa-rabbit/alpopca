@@ -1,4 +1,4 @@
-package dev.gunn96.popcat.infrastructure.web.dto;
+package dev.gunn96.popcat.infrastructure.web.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

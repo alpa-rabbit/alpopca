@@ -1,6 +1,6 @@
 package dev.gunn96.popcat.domain;
 
-import dev.gunn96.popcat.domain.vo.ClickCount;
+import dev.gunn96.popcat.domain.vo.PopCount;
 import dev.gunn96.popcat.domain.vo.RegionCode;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,11 +9,11 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 @Builder
-public class Pop {
+public class RegionStats {
     private final RegionCode regionCode;
-    private final ClickCount clickCount;
+    private final PopCount popCount;
 
-    public Pop addCount(RegionCode regionCode, ClickCount clickCount) {
+    public RegionStats addCount(RegionCode regionCode, PopCount popCount) {
         return null;
     }
 }

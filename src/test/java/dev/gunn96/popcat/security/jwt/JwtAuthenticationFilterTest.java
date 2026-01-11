@@ -6,7 +6,7 @@ import dev.gunn96.popcat.infrastructure.security.jwt.JwtAuthenticationFilter;
 import dev.gunn96.popcat.infrastructure.security.jwt.JwtAuthenticationToken;
 import dev.gunn96.popcat.infrastructure.security.jwt.JwtProvider;
 import dev.gunn96.popcat.infrastructure.security.jwt.TokenClaims;
-import dev.gunn96.popcat.infrastructure.web.dto.PopResponse;
+import dev.gunn96.popcat.infrastructure.web.dto.response.PopResponse;
 import dev.gunn96.popcat.infrastructure.geoip.GeoIpService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

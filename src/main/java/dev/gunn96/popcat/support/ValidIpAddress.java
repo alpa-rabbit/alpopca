@@ -1,4 +1,4 @@
-package dev.gunn96.popcat.domain;
+package dev.gunn96.popcat.support;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
