@@ -35,9 +35,13 @@ public class MaxmindGeoIpServiceImpl implements GeoIpService {
         initializeReader(databasePath);
     }
 
-    public String findRegionCodeByIpAddress(String ipAddress) {
+    public String fetchRegionCodeByIpAddress(String ipAddress) {
         try {
             InetAddress address = InetAddress.getByName(ipAddress);
+            if (address.isLoopbackAddress()) {
+                log.info("localhost address request");
+                return "KR";
+            }
             return reader.tryCountry(address)
                     .map(response -> response.getCountry().getIsoCode())
                     .orElse(UNKNOWN);
