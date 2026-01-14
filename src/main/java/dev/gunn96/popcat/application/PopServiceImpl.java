@@ -24,12 +24,9 @@ public class PopServiceImpl implements PopService {
     public Long addPops(PopCommand popCommand) {
         Optional<RegionStatsEntity> optional = regionStatsRepository
                 .findByRegionCode(popCommand.regionCode().name());
-        RegionStats regionStats = null;
+        RegionStats regionStats;
         if (optional.isEmpty()) {
-            regionStats = RegionStats.builder()
-                    .regionCode(popCommand.regionCode())
-                    .popCount(popCommand.popCount())
-                    .build();
+            regionStats = createNewRegion(popCommand);
         } else{
             regionStats = RegionStatsEntityMapper.toDomain(optional.get());
             regionStats = regionStats.addCount(popCommand.popCount());
@@ -38,6 +35,15 @@ public class PopServiceImpl implements PopService {
         regionStatsRepository.save(RegionStatsEntityMapper.toEntity(regionStats));
 
         return popCommand.popCount().value();
+    }
+
+    private RegionStats createNewRegion(PopCommand popCommand) {
+        RegionStats regionStats;
+        regionStats = RegionStats.builder()
+                .regionCode(popCommand.regionCode())
+                .popCount(popCommand.popCount())
+                .build();
+        return regionStats;
     }
 
 
