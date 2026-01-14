@@ -1,4 +1,4 @@
-package dev.gunn96.popcat.domain;
+package dev.gunn96.popcat.infrastructure.web.support;
 
 import dev.gunn96.popcat.domain.vo.RegionCode;
 
