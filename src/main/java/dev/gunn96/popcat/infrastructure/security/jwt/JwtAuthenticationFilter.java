@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String token = extractBearerTokenThatRemovedPrefix(request);
         String ipAddress = IpAddressExtractor.extractIpAddress(request);
@@ -64,14 +64,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     //if the token doesn't exist, publish new token.
     private void handleNoToken(String ipAddress, HttpServletResponse response) throws IOException {
-        String regionCode = geoIpService.findRegionCodeByIpAddress(ipAddress);
+        String regionCode = geoIpService.fetchRegionCodeByIpAddress(ipAddress);
         String newToken = jwtProvider.generateToken(ipAddress, regionCode);
         sendTokenResponse(response, newToken);
     }
 
     // if the token has expired, publish new token.
     private void handleExpiredToken(String ipAddress, HttpServletResponse response) throws IOException {
-        String regionCode = geoIpService.findRegionCodeByIpAddress(ipAddress);
+        String regionCode = geoIpService.fetchRegionCodeByIpAddress(ipAddress);
         String newToken = jwtProvider.generateToken(ipAddress, regionCode);
         sendTokenResponse(response, newToken);
     }

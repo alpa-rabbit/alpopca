@@ -119,7 +119,7 @@ class JwtAuthenticationFilterTest {
 
         given(request.getHeader("Authorization")).willReturn(null);
         given(request.getHeader("X-Forwarded-For")).willReturn(ipAddress);
-        given(geoIpService.findRegionCodeByIpAddress(ipAddress)).willReturn(regionCode);
+        given(geoIpService.fetchRegionCodeByIpAddress(ipAddress)).willReturn(regionCode);
         given(jwtProvider.generateToken(ipAddress, regionCode)).willReturn(newToken);
         given(response.getWriter()).willReturn(writer);
 

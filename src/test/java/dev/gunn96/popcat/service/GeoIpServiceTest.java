@@ -49,7 +49,7 @@ class GeoIpServiceTest {
         ReflectionTestUtils.setField(geoIpService, "reader", reader);
 
         // when
-        String result = geoIpService.findRegionCodeByIpAddress(ipAddress);
+        String result = geoIpService.fetchRegionCodeByIpAddress(ipAddress);
 
         // then
         assertThat(result).isEqualTo(expectedCountryCode);
@@ -65,7 +65,7 @@ class GeoIpServiceTest {
         ReflectionTestUtils.setField(geoIpService, "reader", reader);
 
         // when
-        String result = geoIpService.findRegionCodeByIpAddress(ipAddress);
+        String result = geoIpService.fetchRegionCodeByIpAddress(ipAddress);
 
         // then
         assertThat(result).isEqualTo("UNKNOWN");
@@ -79,7 +79,7 @@ class GeoIpServiceTest {
         ReflectionTestUtils.setField(geoIpService, "reader", reader);
 
         // when & then
-        assertThatThrownBy(() -> geoIpService.findRegionCodeByIpAddress(invalidIp))
+        assertThatThrownBy(() -> geoIpService.fetchRegionCodeByIpAddress(invalidIp))
                 .isInstanceOf(GeoIpException.InvalidIpAddressException.class)
                 .hasMessageContaining("Invalid IP address format")
                 .hasMessageContaining(invalidIp);
@@ -94,7 +94,7 @@ class GeoIpServiceTest {
         ReflectionTestUtils.setField(geoIpService, "reader", reader);
 
         // when & then
-        assertThatThrownBy(() -> geoIpService.findRegionCodeByIpAddress(ipAddress))
+        assertThatThrownBy(() -> geoIpService.fetchRegionCodeByIpAddress(ipAddress))
                 .isInstanceOf(GeoIpException.DatabaseLookupException.class)
                 .hasMessageContaining("Failed to lookup IP address")
                 .hasMessageContaining(ipAddress);

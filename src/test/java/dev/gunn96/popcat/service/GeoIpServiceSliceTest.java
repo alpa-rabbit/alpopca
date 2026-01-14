@@ -38,7 +38,7 @@ class GeoIpServiceSliceTest {
             String ipAddress = testCase[0];
             String expectedCountryCode = testCase[1];
 
-            String actualCountryCode = geoIpService.findRegionCodeByIpAddress(ipAddress);
+            String actualCountryCode = geoIpService.fetchRegionCodeByIpAddress(ipAddress);
 
             assertThat(actualCountryCode)
                     .as("IP %s should resolve to country code %s", ipAddress, expectedCountryCode)
@@ -53,7 +53,7 @@ class GeoIpServiceSliceTest {
         String invalidIp = "invalid.ip.address";
 
         // when & then
-        assertThatThrownBy(() -> geoIpService.findRegionCodeByIpAddress(invalidIp))
+        assertThatThrownBy(() -> geoIpService.fetchRegionCodeByIpAddress(invalidIp))
                 .isInstanceOf(GeoIpException.InvalidIpAddressException.class)
                 .hasMessageContaining("Invalid IP address format")
                 .hasMessageContaining(invalidIp);
@@ -66,7 +66,7 @@ class GeoIpServiceSliceTest {
         String privateIp = "192.168.0.1";
 
         // when
-        String countryCode = geoIpService.findRegionCodeByIpAddress(privateIp);
+        String countryCode = geoIpService.fetchRegionCodeByIpAddress(privateIp);
 
         // then
         assertThat(countryCode).isEqualTo("UNKNOWN");
