@@ -1,9 +1,13 @@
 package dev.gunn96.popcat.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.gunn96.popcat.common.ApiResponse;
-import dev.gunn96.popcat.dto.response.PopResponse;
-import dev.gunn96.popcat.service.GeoIpService;
+import dev.gunn96.popcat.support.ApiResponse;
+import dev.gunn96.popcat.infrastructure.security.jwt.JwtAuthenticationFilter;
+import dev.gunn96.popcat.infrastructure.security.jwt.JwtAuthenticationToken;
+import dev.gunn96.popcat.infrastructure.security.jwt.JwtProvider;
+import dev.gunn96.popcat.infrastructure.security.jwt.TokenClaims;
+import dev.gunn96.popcat.infrastructure.web.dto.response.PopResponse;
+import dev.gunn96.popcat.infrastructure.geoip.GeoIpService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -115,7 +119,7 @@ class JwtAuthenticationFilterTest {
 
         given(request.getHeader("Authorization")).willReturn(null);
         given(request.getHeader("X-Forwarded-For")).willReturn(ipAddress);
-        given(geoIpService.findRegionCodeByIpAddress(ipAddress)).willReturn(regionCode);
+        given(geoIpService.fetchRegionCodeByIpAddress(ipAddress)).willReturn(regionCode);
         given(jwtProvider.generateToken(ipAddress, regionCode)).willReturn(newToken);
         given(response.getWriter()).willReturn(writer);
 

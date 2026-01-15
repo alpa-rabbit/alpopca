@@ -1,0 +1,9 @@
+CREATE TABLE region_stats
+(
+    id           BIGSERIAL PRIMARY KEY,
+    region_code  VARCHAR(2) NOT NULL UNIQUE,
+    total_clicks BIGINT     NOT NULL DEFAULT 0,
+    created_at   TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    is_deleted   BOOLEAN    NOT NULL DEFAULT FALSE
+);

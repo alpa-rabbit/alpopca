@@ -1,6 +1,8 @@
 package dev.gunn96.popcat.security.jwt;
 
-import dev.gunn96.popcat.exception.JwtException;
+import dev.gunn96.popcat.infrastructure.security.jwt.JwtProvider;
+import dev.gunn96.popcat.infrastructure.security.jwt.TokenClaims;
+import dev.gunn96.popcat.support.exception.JwtException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

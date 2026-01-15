@@ -1,6 +1,7 @@
 package dev.gunn96.popcat.service;
 
-import dev.gunn96.popcat.exception.GeoIpException;
+import dev.gunn96.popcat.infrastructure.geoip.MaxmindGeoIpServiceImpl;
+import dev.gunn96.popcat.support.exception.GeoIpException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +11,14 @@ import org.springframework.test.context.TestPropertySource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest(classes = {GeoIpServiceImpl.class})
+@SpringBootTest(classes = {MaxmindGeoIpServiceImpl.class})
 @TestPropertySource(properties = {
         "geoip.database.path=classpath:geoip/GeoLite2-Country.mmdb"
 })
 class GeoIpServiceSliceTest {
 
     @Autowired
-    private GeoIpServiceImpl geoIpService;
+    private MaxmindGeoIpServiceImpl geoIpService;
 
     @Test
     @DisplayName("실제 GeoIP DB를 사용하여 국가 코드를 조회한다")
@@ -37,7 +38,7 @@ class GeoIpServiceSliceTest {
             String ipAddress = testCase[0];
             String expectedCountryCode = testCase[1];
 
-            String actualCountryCode = geoIpService.findRegionCodeByIpAddress(ipAddress);
+            String actualCountryCode = geoIpService.fetchRegionCodeByIpAddress(ipAddress);
 
             assertThat(actualCountryCode)
                     .as("IP %s should resolve to country code %s", ipAddress, expectedCountryCode)
@@ -52,7 +53,7 @@ class GeoIpServiceSliceTest {
         String invalidIp = "invalid.ip.address";
 
         // when & then
-        assertThatThrownBy(() -> geoIpService.findRegionCodeByIpAddress(invalidIp))
+        assertThatThrownBy(() -> geoIpService.fetchRegionCodeByIpAddress(invalidIp))
                 .isInstanceOf(GeoIpException.InvalidIpAddressException.class)
                 .hasMessageContaining("Invalid IP address format")
                 .hasMessageContaining(invalidIp);
@@ -65,7 +66,7 @@ class GeoIpServiceSliceTest {
         String privateIp = "192.168.0.1";
 
         // when
-        String countryCode = geoIpService.findRegionCodeByIpAddress(privateIp);
+        String countryCode = geoIpService.fetchRegionCodeByIpAddress(privateIp);
 
         // then
         assertThat(countryCode).isEqualTo("UNKNOWN");
