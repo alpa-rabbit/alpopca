@@ -1,44 +1,33 @@
 package dev.gunn96.popcat.application;
 
-import dev.gunn96.popcat.infrastructure.web.dto.response.LeaderboardResponse;
-import dev.gunn96.popcat.infrastructure.web.dto.response.RegionPopResponse;
+import dev.gunn96.popcat.domain.RegionStats;
+import dev.gunn96.popcat.infrastructure.persistence.mapper.RegionStatsEntityMapper;
+import dev.gunn96.popcat.infrastructure.persistence.repository.RegionStatsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class LeaderboardServiceImpl implements LeaderboardService {
-    private final RegionPopRepository regionPopRepository;
+    private final RegionStatsRepository regionStatsRepository;
 
     @Override
-    public LeaderboardResponse getLeaderboard() {
-        List<RegionPopEntity> regionPops = regionPopRepository.findAll();
-        return createLeaderboardResponse(regionPops);
+    public List<RegionStats> getLeaderboard() {
+
+        return regionStatsRepository.findAll().stream()
+                .map(RegionStatsEntityMapper::toDomain)
+                .sorted((a, b) -> Long.compare(b.getPopCount().value(), a.getPopCount().value()))
+                .toList();
     }
 
-    private LeaderboardResponse createLeaderboardResponse(List<RegionPopEntity> regionPops) {
-        return LeaderboardResponse.builder()
-                .globalSum(calculateGlobalSum(regionPops))
-                .rankingList(createSortedRankingList(regionPops))
-                .build();
+    public Long calculateGlobalSum(List<RegionStats> allRegionStatList) {
+        return allRegionStatList.stream()
+                .mapToLong(regionStats -> regionStats.getPopCount().value())
+                .sum();
     }
 
-    private long calculateGlobalSum(List<RegionPopEntity> regionPops) {
-        return regionPops.stream().mapToLong(RegionPopEntity::getCount).sum();
-    }
-
-    private List<RegionPopResponse> createSortedRankingList(List<RegionPopEntity> regionPops) {
-        return regionPops.stream().map(entity -> RegionPopResponse.builder()
-                        .regionCode(entity.getRegionCode())
-                        .count(entity.getCount())
-                        .build())
-                .sorted(Comparator.comparingLong(RegionPopResponse::getCount).reversed())
-                .collect(Collectors.toList());
-    }
 }

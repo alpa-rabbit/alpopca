@@ -15,6 +15,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(LeaderboardController.class)
@@ -36,6 +37,8 @@ public class LeaderboardControllerTest {
     @DisplayName("leaderboard를 조회하는 API를 호출하면 응답을한다")
     void whenLeaderboardEndpointIsCalledItReturnsSuccessfulResponse() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/api/v1/leaderboard"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.globalSum").isNumber())
+                .andExpect(jsonPath("$.data.regionRankList").isArray());
     }
 }
