@@ -8,6 +8,9 @@ public record RegionCode(String name) {
     }
 
     public static RegionCode fromString(String code) {
+        if (code == null) {
+            throw new IllegalArgumentException("Region code cannot be null");
+        }
         return new RegionCode(code.toUpperCase());
     }
 }

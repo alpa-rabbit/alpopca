@@ -28,8 +28,9 @@ public class PopServiceImpl implements PopService {
         if (optional.isEmpty()) {
             regionStats = createNewRegion(popCommand);
         } else{
-            regionStats = RegionStatsEntityMapper.toDomain(optional.get());
-            regionStats = regionStats.addCount(popCommand.popCount());
+            regionStats = RegionStatsEntityMapper
+                    .toDomain(optional.get())
+                    .addCount(popCommand.popCount());
         }
 
         regionStatsRepository.save(RegionStatsEntityMapper.toEntity(regionStats));
