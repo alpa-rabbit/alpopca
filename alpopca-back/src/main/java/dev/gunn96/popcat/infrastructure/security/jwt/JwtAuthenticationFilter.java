@@ -1,7 +1,6 @@
 package dev.gunn96.popcat.infrastructure.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.gunn96.popcat.infrastructure.web.dto.response.PopResponse;
 import dev.gunn96.popcat.support.ApiResponse;
 import dev.gunn96.popcat.support.IpAddressExtractor;
 import dev.gunn96.popcat.support.exception.JwtException;
@@ -50,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
-            handleExpiredToken(ipAddress, response);
+            handleExpiredToken(ipAddress, response, "Token Expired");
         } catch (BadCredentialsException e) {
             // JwtAuthenticationProvider에서 던지는 예외
             handleInvalidToken(response, e.getMessage());
@@ -63,16 +62,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    //if the token doesn't exist, publish new token.
-    private void handleNoToken(String ipAddress, HttpServletResponse response) throws IOException {
-        String newToken = jwtProvider.generateToken(ipAddress);
-        sendTokenResponse(response, newToken);
-    }
-
     // if the token has expired, publish new token.
-    private void handleExpiredToken(String ipAddress, HttpServletResponse response) throws IOException {
-        String newToken = jwtProvider.generateToken(ipAddress);
-        sendTokenResponse(response, newToken);
+    private void handleExpiredToken(String ipAddress, HttpServletResponse response, String message) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        objectMapper.writeValue(response.getWriter(), ApiResponse.error("TOKEN_EXPIRED",message));
     }
 
     // if thoe token is failed to validate
@@ -81,17 +75,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         objectMapper.writeValue(response.getWriter(),
                 ApiResponse.error("INVALID_TOKEN", message));
-    }
-
-    private void sendTokenResponse(HttpServletResponse response, String token) throws IOException {
-        PopResponse popResponse = PopResponse.builder()
-                .countAppend(null)
-                .newToken(token)
-                .isProcessed(false)
-                .build();
-
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        objectMapper.writeValue(response.getWriter(), ApiResponse.success(popResponse));
     }
 
     // removes `Bearer ` prefix
