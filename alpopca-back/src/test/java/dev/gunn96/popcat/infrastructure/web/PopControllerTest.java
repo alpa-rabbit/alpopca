@@ -50,13 +50,12 @@ public class PopControllerTest {
         String newToken = "new-jwt-token";
 
         TokenClaims tokenClaims = TokenClaims.builder()
-                .ipAddress(VALID_IP)
-                .regionCode(VALID_REGION_CODE).build();
+                .ipAddress(VALID_IP).build();
 
         given(geoIpService.fetchRegionCodeByIpAddress(VALID_IP))
                 .willReturn(VALID_REGION_CODE);
         given(popService.addPops(any(PopCommand.class))).willReturn(popCount);
-        given(jwtProvider.generateToken(VALID_IP, VALID_REGION_CODE))
+        given(jwtProvider.generateToken(VALID_IP))
                 .willReturn(newToken);
 
 

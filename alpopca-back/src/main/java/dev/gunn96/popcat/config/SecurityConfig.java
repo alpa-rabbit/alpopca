@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.gunn96.popcat.infrastructure.security.jwt.JwtAuthenticationFilter;
 import dev.gunn96.popcat.infrastructure.security.jwt.JwtAuthenticationProvider;
 import dev.gunn96.popcat.infrastructure.security.jwt.JwtProvider;
-import dev.gunn96.popcat.infrastructure.geoip.GeoIpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,9 +24,9 @@ public class SecurityConfig {
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(
             AuthenticationConfiguration authConfig, JwtProvider jwtProvider,
-            GeoIpService geoIpService, ObjectMapper objectMapper) throws Exception {
+             ObjectMapper objectMapper) throws Exception {
         return new JwtAuthenticationFilter(authConfig.getAuthenticationManager(),
-                jwtProvider, geoIpService, objectMapper
+                jwtProvider, objectMapper
         );
     }
 
@@ -43,13 +42,13 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/api/v1/leaderboard").permitAll()
+                        .requestMatchers("/api/v1/leaderboard/**").permitAll()
                         .requestMatchers("/api/v1/pop/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(jwtAuthenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .securityMatcher("/api/v1/pop/**")
+//                .securityMatcher("/api/v1/pop/**")
                 .build();
     }
 }

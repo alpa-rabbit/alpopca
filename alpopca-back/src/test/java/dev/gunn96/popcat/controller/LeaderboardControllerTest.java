@@ -1,11 +1,12 @@
 package dev.gunn96.popcat.controller;
 
+import dev.gunn96.popcat.application.LeaderboardService;
 import dev.gunn96.popcat.config.SecurityConfig;
+import dev.gunn96.popcat.domain.RegionStats;
+import dev.gunn96.popcat.infrastructure.geoip.GeoIpService;
 import dev.gunn96.popcat.infrastructure.security.jwt.JwtAuthenticationProvider;
 import dev.gunn96.popcat.infrastructure.security.jwt.JwtProvider;
 import dev.gunn96.popcat.infrastructure.web.LeaderboardController;
-import dev.gunn96.popcat.infrastructure.geoip.GeoIpService;
-import dev.gunn96.popcat.application.LeaderboardService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.List;
+
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,6 +40,12 @@ public class LeaderboardControllerTest {
     @Test
     @DisplayName("leaderboard를 조회하는 API를 호출하면 응답을한다")
     void whenLeaderboardEndpointIsCalledItReturnsSuccessfulResponse() throws Exception {
+        //given
+        List<RegionStats> sortedRegionTest = List.of();
+        given(leaderboardService.getLeaderboard()).willReturn(sortedRegionTest);
+        given(leaderboardService.calculateGlobalSum(sortedRegionTest)).willReturn(0L);
+
+        //then
         mvc.perform(MockMvcRequestBuilders.get("/api/v1/leaderboard"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.globalSum").isNumber())

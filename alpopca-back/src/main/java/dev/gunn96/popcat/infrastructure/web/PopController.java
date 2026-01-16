@@ -32,8 +32,8 @@ public class PopController {
             @RequestParam("count") Long count,
             @AuthenticationPrincipal TokenClaims claims
     ) {
-        log.info("Add pops with count {} for IP {} and region {}",
-                count, claims.ipAddress(), claims.regionCode());
+        log.info("Add pops with count {} for IP {}",
+                count, claims.ipAddress());
         //1. IP -> Region Code
         PopRequest popRequest = PopRequest.of(claims.ipAddress(), count);
         RegionCode regionCode = RegionCode.fromString(
@@ -45,8 +45,7 @@ public class PopController {
 
         //3. 토큰 생성
         String newToken = jwtProvider.generateToken(
-                popRequest.ipAddress().value(),
-                regionCode.name()
+                popRequest.ipAddress().value()
         );
         //4. 응답에 함께 실어서 리턴
         PopResponse popResponse = PopResponse.builder()

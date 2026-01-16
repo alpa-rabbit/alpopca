@@ -1,10 +1,10 @@
 package dev.gunn96.popcat.infrastructure.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.gunn96.popcat.support.ApiResponse;
 import dev.gunn96.popcat.infrastructure.web.dto.response.PopResponse;
-import dev.gunn96.popcat.infrastructure.geoip.GeoIpService;
+import dev.gunn96.popcat.support.ApiResponse;
 import dev.gunn96.popcat.support.IpAddressExtractor;
+import dev.gunn96.popcat.support.exception.JwtException;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,29 +13,23 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Set;
 
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final Set<String> SECURED_API_PATHS = Set.of(
-            "/api/v1/pop",
-            "/api/v1/pop/**"
-    );
 
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
-    private final GeoIpService geoIpService;
     private final ObjectMapper objectMapper;
-    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -45,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Case the token doesn't exist
         if (token == null) {
-            handleNoToken(ipAddress, response);
+            filterChain.doFilter(request, response);
             return;
         }
 
@@ -57,22 +51,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
             handleExpiredToken(ipAddress, response);
-        } catch (Exception e) {
-            handleInvalidToken(response, "Invalid token");
+        } catch (BadCredentialsException e) {
+            // JwtAuthenticationProvider에서 던지는 예외
+            handleInvalidToken(response, e.getMessage());
+        } catch (JwtException e) {
+            // JwtProvider에서 던지는 커스텀 예외
+            handleInvalidToken(response, e.getMessage());
+        } catch (AuthenticationException e) {
+            // 기타 Spring Security 인증 예외
+            handleInvalidToken(response, "Authentication failed");
         }
     }
 
     //if the token doesn't exist, publish new token.
     private void handleNoToken(String ipAddress, HttpServletResponse response) throws IOException {
-        String regionCode = geoIpService.fetchRegionCodeByIpAddress(ipAddress);
-        String newToken = jwtProvider.generateToken(ipAddress, regionCode);
+        String newToken = jwtProvider.generateToken(ipAddress);
         sendTokenResponse(response, newToken);
     }
 
     // if the token has expired, publish new token.
     private void handleExpiredToken(String ipAddress, HttpServletResponse response) throws IOException {
-        String regionCode = geoIpService.fetchRegionCodeByIpAddress(ipAddress);
-        String newToken = jwtProvider.generateToken(ipAddress, regionCode);
+        String newToken = jwtProvider.generateToken(ipAddress);
         sendTokenResponse(response, newToken);
     }
 
@@ -104,11 +103,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
-    //JwtFilter should be applied to /api/vi/pop endpoint
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getServletPath();
-        return SECURED_API_PATHS.stream()
-                .noneMatch(pattern -> antPathMatcher.match(pattern, path));
-    }
 }

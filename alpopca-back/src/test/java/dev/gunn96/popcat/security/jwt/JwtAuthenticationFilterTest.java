@@ -1,13 +1,12 @@
 package dev.gunn96.popcat.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.gunn96.popcat.support.ApiResponse;
+import dev.gunn96.popcat.infrastructure.geoip.GeoIpService;
 import dev.gunn96.popcat.infrastructure.security.jwt.JwtAuthenticationFilter;
 import dev.gunn96.popcat.infrastructure.security.jwt.JwtAuthenticationToken;
 import dev.gunn96.popcat.infrastructure.security.jwt.JwtProvider;
 import dev.gunn96.popcat.infrastructure.security.jwt.TokenClaims;
-import dev.gunn96.popcat.infrastructure.web.dto.response.PopResponse;
-import dev.gunn96.popcat.infrastructure.geoip.GeoIpService;
+import dev.gunn96.popcat.support.ApiResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,8 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class JwtAuthenticationFilterTest {
@@ -65,12 +63,7 @@ class JwtAuthenticationFilterTest {
 
     @BeforeEach
     void setUp() {
-        jwtAuthenticationFilter = new JwtAuthenticationFilter(
-                authenticationManager,
-                jwtProvider,
-                geoIpService,
-                objectMapper
-        );
+        jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtProvider, objectMapper);
         SecurityContextHolder.clearContext();
     }
 
@@ -82,22 +75,12 @@ class JwtAuthenticationFilterTest {
         String token = "valid.jwt.token";
         String bearerToken = "Bearer " + token;
         String ipAddress = "127.0.0.1";
-        String regionCode = "KR";
 
-        TokenClaims claims = TokenClaims.builder()
-                .id("id")
-                .issuer("issuer")
-                .ipAddress(ipAddress)
-                .regionCode(regionCode)
-                .issuedAt(0)
-                .notBefore(0)
-                .expiresAt(0)
-                .build();
+        TokenClaims claims = TokenClaims.builder().id("id").issuer("issuer").ipAddress(ipAddress).issuedAt(0).notBefore(0).expiresAt(0).build();
 
         given(request.getHeader("Authorization")).willReturn(bearerToken);
         given(request.getHeader("X-Forwarded-For")).willReturn(ipAddress);
-        given(authenticationManager.authenticate(any(JwtAuthenticationToken.class)))
-                .willReturn(new JwtAuthenticationToken(claims, ipAddress, Collections.emptyList()));
+        given(authenticationManager.authenticate(any(JwtAuthenticationToken.class))).willReturn(new JwtAuthenticationToken(claims, ipAddress, Collections.emptyList()));
 
         // when
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
@@ -109,31 +92,22 @@ class JwtAuthenticationFilterTest {
         verify(authenticationManager).authenticate(any(JwtAuthenticationToken.class));
     }
 
-    @Test
-    @DisplayName("토큰이 없는 경우 새 토큰 발급")
-    void doFilterInternal_NoToken() throws ServletException, IOException {
-        // given
-        String ipAddress = "127.0.0.1";
-        String regionCode = "KR";
-        String newToken = "new.token";
 
+    @Test
+    @DisplayName("토큰이 없는 경우 다음 필터로 넘긴다")
+    void doFilterInternal_NoToken_ContinuesFilterChain() throws ServletException, IOException {
+        // given
         given(request.getHeader("Authorization")).willReturn(null);
-        given(request.getHeader("X-Forwarded-For")).willReturn(ipAddress);
-        given(geoIpService.fetchRegionCodeByIpAddress(ipAddress)).willReturn(regionCode);
-        given(jwtProvider.generateToken(ipAddress, regionCode)).willReturn(newToken);
-        given(response.getWriter()).willReturn(writer);
+        given(request.getHeader("X-Forwarded-For")).willReturn("127.0.0.1");
 
         // when
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
         // then
-        verify(response).setContentType(MediaType.APPLICATION_JSON_VALUE);
-        verify(objectMapper).writeValue(any(PrintWriter.class), argThat(response ->
-                response instanceof ApiResponse && ((ApiResponse<?>) response).getData() instanceof PopResponse
-                        && ((PopResponse) ((ApiResponse<?>) response).getData()).isProcessed() == false
-        ));
-        verifyNoInteractions(filterChain);
+        verify(filterChain).doFilter(request, response);  // 다음 필터로 넘겼는지 확인
+        verify(response, never()).setContentType(any());  // 응답을 직접 쓰지 않았는지 확인
     }
+
 
 
     @Test
@@ -146,8 +120,7 @@ class JwtAuthenticationFilterTest {
 
         given(request.getHeader("Authorization")).willReturn(bearerToken);
         given(request.getHeader("X-Forwarded-For")).willReturn(ipAddress);
-        given(authenticationManager.authenticate(any(JwtAuthenticationToken.class)))
-                .willThrow(new BadCredentialsException("Invalid token"));
+        given(authenticationManager.authenticate(any(JwtAuthenticationToken.class))).willThrow(new BadCredentialsException("Invalid token"));
         given(response.getWriter()).willReturn(writer);
 
         // when
@@ -156,9 +129,7 @@ class JwtAuthenticationFilterTest {
         // then
         verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         verify(response).setContentType(MediaType.APPLICATION_JSON_VALUE);
-        verify(objectMapper).writeValue(any(PrintWriter.class), argThat(response ->
-                response instanceof ApiResponse && !((ApiResponse<?>) response).isSuccess()
-        ));
+        verify(objectMapper).writeValue(any(PrintWriter.class), argThat(response -> response instanceof ApiResponse && !((ApiResponse<?>) response).isSuccess()));
         verifyNoInteractions(filterChain);
     }
 }
