@@ -6,7 +6,7 @@ import dev.gunn96.popcat.domain.RegionStats;
 import dev.gunn96.popcat.infrastructure.geoip.GeoIpService;
 import dev.gunn96.popcat.infrastructure.security.jwt.JwtAuthenticationProvider;
 import dev.gunn96.popcat.infrastructure.security.jwt.JwtProvider;
-import dev.gunn96.popcat.infrastructure.web.LeaderboardController;
+import dev.gunn96.popcat.infrastructure.web.controller.LeaderboardController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
