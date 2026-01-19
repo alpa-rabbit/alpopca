@@ -42,6 +42,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/").permitAll()
+                        .requestMatchers("/api/v1/auth/token").permitAll()
                         .requestMatchers("/api/v1/leaderboard/**").permitAll()
                         .requestMatchers("/api/v1/pop/**").authenticated()
                         .anyRequest().authenticated()

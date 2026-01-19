@@ -22,15 +22,11 @@ public class JwtProvider {
     private final long expirationSeconds;
     private final JwtParser jwtParser;
 
-    public JwtProvider(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.server-address}") String serverAddress,
-            @Value("${jwt.expiration-seconds}") long expirationSeconds
-    ) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.serverIdentifier = generateServerIdentifier(serverAddress, secret);
-        this.expirationSeconds = expirationSeconds;
-        this.jwtParser = Jwts.parser().verifyWith(key).build();
+    public JwtProvider(JwtProperties properties) {
+        this.key = Keys.hmacShaKeyFor(properties.secret().getBytes(StandardCharsets.UTF_8));
+        this.serverIdentifier = generateServerIdentifier(properties.serverAddress(), properties.secret());
+        this.expirationSeconds = properties.expirationSeconds();
+        this.jwtParser = Jwts.parser().verifyWith(key).build();;
     }
 
     public String generateToken(String ipAddress) {
