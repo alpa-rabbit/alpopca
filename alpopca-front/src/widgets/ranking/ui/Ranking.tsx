@@ -73,6 +73,11 @@ export default function Ranking({ rankings, currentUserRank }: RankingProps) {
     toggleExpand();
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleExpand();
+  };
+
   const formatScore = (score: number) => {
     if (score >= 1e9) {
       return `${(score / 1e9).toFixed(1)}B`;
@@ -86,12 +91,11 @@ export default function Ranking({ rankings, currentUserRank }: RankingProps) {
       <div className='fixed bottom-0 left-0 right-0 z-20 pointer-events-none w-full max-w-3xl mx-auto'>
         <div className='relative'>
           <div
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleExpand();
-            }}
+            onClick={handleClick}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
+            onMouseDown={(e) => e.stopPropagation()}
+            onMouseUp={(e) => e.stopPropagation()}
             className='flex items-center justify-between px-4 py-2 bg-white/90 rounded-t-lg pointer-events-auto cursor-pointer'
           >
             <div className='flex justify-between gap-3 flex-1 min-w-0'>
@@ -125,12 +129,11 @@ export default function Ranking({ rankings, currentUserRank }: RankingProps) {
         <div className='bg-white/90 rounded-t-lg pointer-events-auto'>
           {/* 헤더 */}
           <div
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleExpand();
-            }}
+            onClick={handleClick}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
+            onMouseDown={(e) => e.stopPropagation()}
+            onMouseUp={(e) => e.stopPropagation()}
             className='flex items-center justify-between px-4 py-3 border-b border-black/10 cursor-pointer'
           >
             <div className='flex items-center justify-center gap-2 flex-1'>
@@ -144,6 +147,11 @@ export default function Ranking({ rankings, currentUserRank }: RankingProps) {
           <div
             className='overflow-y-auto max-h-96 [&::-webkit-scrollbar]:hidden'
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            onMouseUp={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
           >
             {rankings.map((item) => (
               <RankingItemComponent
