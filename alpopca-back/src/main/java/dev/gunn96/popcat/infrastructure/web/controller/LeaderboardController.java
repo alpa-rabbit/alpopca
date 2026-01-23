@@ -1,4 +1,4 @@
-package dev.gunn96.popcat.infrastructure.web;
+package dev.gunn96.popcat.infrastructure.web.controller;
 
 import dev.gunn96.popcat.application.LeaderboardService;
 import dev.gunn96.popcat.domain.RegionStats;

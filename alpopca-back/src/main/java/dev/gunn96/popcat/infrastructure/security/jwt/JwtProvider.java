@@ -22,25 +22,20 @@ public class JwtProvider {
     private final long expirationSeconds;
     private final JwtParser jwtParser;
 
-    public JwtProvider(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.server-address}") String serverAddress,
-            @Value("${jwt.expiration-seconds}") long expirationSeconds
-    ) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.serverIdentifier = generateServerIdentifier(serverAddress, secret);
-        this.expirationSeconds = expirationSeconds;
-        this.jwtParser = Jwts.parser().verifyWith(key).build();
+    public JwtProvider(JwtProperties properties) {
+        this.key = Keys.hmacShaKeyFor(properties.secret().getBytes(StandardCharsets.UTF_8));
+        this.serverIdentifier = generateServerIdentifier(properties.serverAddress(), properties.secret());
+        this.expirationSeconds = properties.expirationSeconds();
+        this.jwtParser = Jwts.parser().verifyWith(key).build();;
     }
 
-    public String generateToken(String ipAddress, String regionCode) {
+    public String generateToken(String ipAddress) {
         Instant now = Instant.now();
 
         TokenClaims claims = TokenClaims.builder()
                 .id(UUID.randomUUID().toString())
                 .issuer(serverIdentifier)
                 .ipAddress(ipAddress)
-                .regionCode(regionCode)
                 .issuedAt(now.getEpochSecond())
                 .notBefore(now.minusSeconds(600).getEpochSecond())
                 .expiresAt(now.plusSeconds(expirationSeconds).getEpochSecond())
@@ -50,7 +45,6 @@ public class JwtProvider {
                 .id(claims.id())
                 .issuer(claims.issuer())
                 .audience().add(claims.ipAddress()).and()
-                .subject(claims.regionCode())
                 .issuedAt(Date.from(Instant.ofEpochSecond(claims.issuedAt())))
                 .notBefore(Date.from(Instant.ofEpochSecond(claims.notBefore())))
                 .expiration(Date.from(Instant.ofEpochSecond(claims.expiresAt())))
@@ -74,7 +68,6 @@ public class JwtProvider {
                     .id(claims.getId())
                     .issuer(claims.getIssuer())
                     .ipAddress(claims.getAudience().iterator().next())
-                    .regionCode(claims.getSubject())
                     .issuedAt(claims.getIssuedAt().toInstant().getEpochSecond())
                     .notBefore(claims.getNotBefore().toInstant().getEpochSecond())
                     .expiresAt(claims.getExpiration().toInstant().getEpochSecond())

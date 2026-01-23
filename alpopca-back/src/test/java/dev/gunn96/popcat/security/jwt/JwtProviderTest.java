@@ -1,5 +1,6 @@
 package dev.gunn96.popcat.security.jwt;
 
+import dev.gunn96.popcat.infrastructure.security.jwt.JwtProperties;
 import dev.gunn96.popcat.infrastructure.security.jwt.JwtProvider;
 import dev.gunn96.popcat.infrastructure.security.jwt.TokenClaims;
 import dev.gunn96.popcat.support.exception.JwtException;
@@ -28,12 +29,12 @@ class JwtProviderTest {
     private static final String SECRET = "thisIsTestSecretKeyForJwtProviderTestthisIsTestSecretKeyForJwtProviderTest";
     private static final String SERVER_ADDRESS = "127.0.0.1:50001";
     private static final String IP_ADDRESS = "127.0.0.1";
-    private static final String REGION_CODE = "KR";
     private static final long EXPIRATION_SECONDS = 1;
 
     @BeforeEach
     void setUp() {
-        jwtProvider = new JwtProvider(SECRET, SERVER_ADDRESS, EXPIRATION_SECONDS);
+        JwtProperties jwtProperties = new JwtProperties(SECRET,SERVER_ADDRESS,EXPIRATION_SECONDS);
+        jwtProvider = new JwtProvider(jwtProperties);
         key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
         serverIdentifier = UUID.nameUUIDFromBytes(
                 (SERVER_ADDRESS + SECRET).getBytes(StandardCharsets.UTF_8)
@@ -45,7 +46,7 @@ class JwtProviderTest {
     @DisplayName("토큰 생성 성공")
     void generateToken_Success() {
         // when
-        String token = jwtProvider.generateToken(IP_ADDRESS, REGION_CODE);
+        String token = jwtProvider.generateToken(IP_ADDRESS);
 
         // then
         assertThat(token).isNotNull().isNotBlank();
@@ -55,7 +56,7 @@ class JwtProviderTest {
     @DisplayName("토큰 검증 성공")
     void validateToken_Success() {
         // given
-        String token = jwtProvider.generateToken(IP_ADDRESS, REGION_CODE);
+        String token = jwtProvider.generateToken(IP_ADDRESS);
 
         // when
         TokenClaims claims = jwtProvider.validateToken(token, IP_ADDRESS);
@@ -63,14 +64,13 @@ class JwtProviderTest {
         // then
         assertThat(claims).isNotNull();
         assertThat(claims.ipAddress()).isEqualTo(IP_ADDRESS);
-        assertThat(claims.regionCode()).isEqualTo(REGION_CODE);
     }
 
     @Test
     @DisplayName("잘못된 IP로 토큰 검증 실패")
     void validateToken_WrongIpAddress() {
         // given
-        String token = jwtProvider.generateToken(IP_ADDRESS, REGION_CODE);
+        String token = jwtProvider.generateToken(IP_ADDRESS);
         String wrongIp = "192.168.0.1";
 
         // when, then
@@ -88,7 +88,6 @@ class JwtProviderTest {
                 .id(UUID.randomUUID().toString())
                 .issuer(serverIdentifier)
                 .audience().add(IP_ADDRESS).and()
-                .subject(REGION_CODE)
                 .issuedAt(Date.from(now.minusSeconds(10)))
                 .notBefore(Date.from(now.minusSeconds(10)))
                 .expiration(Date.from(now.minusSeconds(5)))  // 5초 전에 만료된 토큰

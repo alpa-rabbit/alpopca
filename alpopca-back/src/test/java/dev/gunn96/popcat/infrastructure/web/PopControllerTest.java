@@ -6,6 +6,7 @@ import dev.gunn96.popcat.infrastructure.geoip.GeoIpService;
 import dev.gunn96.popcat.infrastructure.security.jwt.JwtAuthenticationToken;
 import dev.gunn96.popcat.infrastructure.security.jwt.JwtProvider;
 import dev.gunn96.popcat.infrastructure.security.jwt.TokenClaims;
+import dev.gunn96.popcat.infrastructure.web.controller.PopController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +51,12 @@ public class PopControllerTest {
         String newToken = "new-jwt-token";
 
         TokenClaims tokenClaims = TokenClaims.builder()
-                .ipAddress(VALID_IP)
-                .regionCode(VALID_REGION_CODE).build();
+                .ipAddress(VALID_IP).build();
 
         given(geoIpService.fetchRegionCodeByIpAddress(VALID_IP))
                 .willReturn(VALID_REGION_CODE);
         given(popService.addPops(any(PopCommand.class))).willReturn(popCount);
-        given(jwtProvider.generateToken(VALID_IP, VALID_REGION_CODE))
+        given(jwtProvider.generateToken(VALID_IP))
                 .willReturn(newToken);
 
 
@@ -67,6 +67,8 @@ public class PopControllerTest {
                         .queryParam("count", String.valueOf(popCount)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.countAppend").value(popCount))
-                .andExpect(jsonPath("$.data.isProcessed").value(true));
+                .andExpect(jsonPath("$.data.isProcessed").value(true))
+                .andExpect(jsonPath("$.data.regionCode").exists());
+
     }
 }

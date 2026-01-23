@@ -38,12 +38,10 @@ class JwtAuthenticationProviderTest {
         // given
         String token = "valid.jwt.token";
         String ipAddress = "127.0.0.1";
-        String regionCode = "KR";
         TokenClaims expectedClaims = TokenClaims.builder()
                 .id("id")
                 .issuer("issuer")
                 .ipAddress(ipAddress)
-                .regionCode(regionCode)
                 .issuedAt(0)
                 .notBefore(0)
                 .expiresAt(0)
