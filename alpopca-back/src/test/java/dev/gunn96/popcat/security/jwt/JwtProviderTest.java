@@ -1,5 +1,6 @@
 package dev.gunn96.popcat.security.jwt;
 
+import dev.gunn96.popcat.infrastructure.security.jwt.JwtProperties;
 import dev.gunn96.popcat.infrastructure.security.jwt.JwtProvider;
 import dev.gunn96.popcat.infrastructure.security.jwt.TokenClaims;
 import dev.gunn96.popcat.support.exception.JwtException;
@@ -32,7 +33,8 @@ class JwtProviderTest {
 
     @BeforeEach
     void setUp() {
-        jwtProvider = new JwtProvider(SECRET, SERVER_ADDRESS, EXPIRATION_SECONDS);
+        JwtProperties jwtProperties = new JwtProperties(SECRET,SERVER_ADDRESS,EXPIRATION_SECONDS);
+        jwtProvider = new JwtProvider(jwtProperties);
         key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
         serverIdentifier = UUID.nameUUIDFromBytes(
                 (SERVER_ADDRESS + SECRET).getBytes(StandardCharsets.UTF_8)
