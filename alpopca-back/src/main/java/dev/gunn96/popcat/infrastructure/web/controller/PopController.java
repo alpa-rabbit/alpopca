@@ -52,6 +52,7 @@ public class PopController {
                 .isProcessed(true)
                 .countAppend(addedCount)
                 .newToken(newToken)
+                .regionCode(regionCode.name())
                 .build();
 
         return ApiResponse.success(popResponse);

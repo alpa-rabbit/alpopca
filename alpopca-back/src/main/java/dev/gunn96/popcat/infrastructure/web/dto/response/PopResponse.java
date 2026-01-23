@@ -6,5 +6,6 @@ import lombok.Builder;
 public record PopResponse(
         Long countAppend,
         String newToken,
-        Boolean isProcessed) {
+        Boolean isProcessed,
+        String regionCode) {
 }

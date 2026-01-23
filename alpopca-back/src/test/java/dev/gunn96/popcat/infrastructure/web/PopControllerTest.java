@@ -67,6 +67,8 @@ public class PopControllerTest {
                         .queryParam("count", String.valueOf(popCount)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.countAppend").value(popCount))
-                .andExpect(jsonPath("$.data.isProcessed").value(true));
+                .andExpect(jsonPath("$.data.isProcessed").value(true))
+                .andExpect(jsonPath("$.data.regionCode").exists());
+
     }
 }
