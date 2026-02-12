@@ -22,22 +22,22 @@ interface RankingItemProps {
 
 function RankingItemComponent({ rank, country, countryFlag, score, showMedal }: RankingItemProps) {
   const getMedalIcon = () => {
-    if (rank === 1) return '🥇';
+    if (rank === 1) return '🥇'; // Consider pixel art icons later
     if (rank === 2) return '🥈';
     if (rank === 3) return '🥉';
     return null;
   };
 
   return (
-    <div className='flex items-center justify-between px-4 py-2 bg-white/90 border-t border-black/10'>
+    <div className='flex items-center justify-between px-4 py-3 bg-white border-b-2 border-dashed border-black/20 hover:bg-black/5 transition-colors'>
       <div className='flex items-center gap-3'>
         {showMedal && getMedalIcon() && <span className='text-xl'>{getMedalIcon()}</span>}
-        <span className='text-sm font-black text-black'>#{rank}</span>
+        <span className='text-xs md:text-sm font-bold font-["Press_Start_2P"] text-black'>#{rank}</span>
         <span className='text-xl'>{countryFlag}</span>
-        <span className='text-sm font-black text-black'>{country}</span>
+        <span className='text-xs md:text-sm font-bold font-["Press_Start_2P"] text-black truncate max-w-[100px] md:max-w-none'>{country}</span>
       </div>
       <div className='flex items-center gap-2'>
-        <span className='text-sm font-black text-black'>{score.toLocaleString()}</span>
+        <span className='text-xs md:text-sm font-bold font-["Press_Start_2P"] text-primary'>{score.toLocaleString()}</span>
       </div>
     </div>
   );
@@ -49,10 +49,10 @@ export default function Ranking({ rankings, currentUserRank }: RankingProps) {
 
   if (!topRank) {
     return (
-      <div className='fixed bottom-0 left-0 right-0 z-20 pointer-events-none'>
-        <div className='relative'>
-          <div className='flex flex-col items-center justify-center gap-1 px-4 py-3 bg-white/90 rounded-t-lg pointer-events-auto'>
-            <span className='text-sm font-black text-black'>👆Tap to be the first!👆</span>
+      <div className='fixed bottom-0 left-0 right-0 z-20 pointer-events-none p-4'>
+        <div className='relative flex justify-center'>
+          <div className='flex flex-col items-center justify-center px-6 py-4 bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] pointer-events-auto animate-bounce'>
+            <span className='text-xs md:text-sm font-bold font-["Press_Start_2P"] text-black text-center leading-relaxed'>👆 TAP TO BE #1! 👆</span>
           </div>
         </div>
       </div>
@@ -96,26 +96,26 @@ export default function Ranking({ rankings, currentUserRank }: RankingProps) {
             onTouchEnd={handleTouchEnd}
             onMouseDown={(e) => e.stopPropagation()}
             onMouseUp={(e) => e.stopPropagation()}
-            className='flex items-center justify-between px-4 py-2 bg-white/90 rounded-t-lg pointer-events-auto cursor-pointer'
+            className='flex items-center justify-between px-4 py-3 bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] pointer-events-auto cursor-pointer hover:translate-y-1 hover:shadow-none transition-all'
           >
             <div className='flex justify-between gap-3 flex-1 min-w-0'>
-              <div className='flex gap-4 items-center'>
+              <div className='flex gap-3 md:gap-4 items-center'>
                 <span className='text-xl'>🏆</span>
-                <span className='text-sm font-black text-black'>#{topRank.rank}</span>
+                <span className='text-xs font-bold font-["Press_Start_2P"] text-black'>#{topRank.rank}</span>
                 <span className='text-xl'>{topRank.countryFlag}</span>
-                <span className='text-sm font-black text-black'>{formatScore(topRank.score)}</span>
+                <span className='text-xs font-bold font-["Press_Start_2P"] text-primary'>{formatScore(topRank.score)}</span>
               </div>
-              <div className='flex gap-4 items-center'>
+              <div className='flex gap-2 md:gap-4 items-center hidden sm:flex'>
                 {currentUserRank && (
                   <>
-                    <span className='text-sm text-black/50'>...</span>
+                    <span className='text-sm text-black/50 font-["Press_Start_2P"]'>...</span>
                     <span className='text-xl'>{currentUserRank.countryFlag}</span>
-                    <span className='text-sm font-black text-black'>{currentUserRank.score.toLocaleString()}</span>
+                    <span className='text-xs font-bold font-["Press_Start_2P"] text-black'>{formatScore(currentUserRank.score)}</span>
                   </>
                 )}
               </div>
             </div>
-            <span className='ml-4 text-2xl font-black text-black shrink-0'>^</span>
+            <span className='ml-4 text-sm font-bold font-["Press_Start_2P"] text-black shrink-0'>^</span>
           </div>
         </div>
       </div>
@@ -126,7 +126,7 @@ export default function Ranking({ rankings, currentUserRank }: RankingProps) {
   return (
     <div className='fixed bottom-0 left-0 right-0 z-20 pointer-events-none'>
       <div className='relative'>
-        <div className='bg-white/90 rounded-t-lg pointer-events-auto'>
+        <div className='bg-white border-4 border-b-0 border-black shadow-[0px_-4px_0px_0px_rgba(0,0,0,0.1)] pointer-events-auto'>
           {/* 헤더 */}
           <div
             onClick={handleClick}
@@ -134,13 +134,13 @@ export default function Ranking({ rankings, currentUserRank }: RankingProps) {
             onTouchEnd={handleTouchEnd}
             onMouseDown={(e) => e.stopPropagation()}
             onMouseUp={(e) => e.stopPropagation()}
-            className='flex items-center justify-between px-4 py-3 border-b border-black/10 cursor-pointer'
+            className='flex items-center justify-between px-4 py-4 border-b-4 border-black cursor-pointer bg-primary/5 hover:bg-primary/10 transition-colors'
           >
             <div className='flex items-center justify-center gap-2 flex-1'>
               <span className='text-xl'>🏆</span>
-              <h2 className='text-lg font-black text-black'>Leaderboard</h2>
+              <h2 className='text-sm md:text-base font-bold font-["Press_Start_2P"] text-black'>LEADERBOARD</h2>
             </div>
-            <span className='text-2xl font-black text-black shrink-0'>v</span>
+            <span className='text-sm font-bold font-["Press_Start_2P"] text-black shrink-0'>v</span>
           </div>
 
           {/* 리스트 */}

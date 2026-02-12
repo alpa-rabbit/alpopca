@@ -11,7 +11,7 @@ export default function PopArea({ isPopping }: PopAreaProps) {
       <img
         src={isPopping ? alpacaPopImage : alpacaImage}
         alt={isPopping ? 'Alpaca popping' : 'Alpaca'}
-        className="h-[70%] w-auto max-w-full object-contain transition-all duration-100"
+        className="h-[70%] w-auto max-w-full object-contain transition-all duration-100 drop-shadow-xl"
         draggable={false}
       />
     </div>
