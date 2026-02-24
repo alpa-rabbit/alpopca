@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import SoundOnIcon from '@/shared/assets/sound_on.svg';
-import SoundOffIcon from '@/shared/assets/sound_off.svg';
+import 'pixelarticons/fonts/pixelart-icons-font.css';
 
 export default function SoundToggleButton() {
   const [isSoundOn, setIsSoundOn] = useState(true);
@@ -14,12 +13,13 @@ export default function SoundToggleButton() {
     <div>
       <button
         onClick={toggleSound}
-        className="w-8 h-8 flex items-center justify-center"
+        className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center border-2 border-transparent hover:border-black/10 rounded-lg"
+        aria-label={isSoundOn ? 'Mute' : 'Unmute'}
       >
         {isSoundOn ? (
-          <img src={SoundOnIcon} alt="Sound On" className="w-8 h-8 object-contain" />
+          <i className="pixelart-icons-font-volume-2 text-3xl md:text-4xl text-black pixel-antialiased drop-shadow-sm"></i>
         ) : (
-          <img src={SoundOffIcon} alt="Sound Off" className="w-8 h-8 object-contain" />
+          <i className="pixelart-icons-font-volume-x text-3xl md:text-4xl text-black/50 pixel-antialiased drop-shadow-sm"></i>
         )}
       </button>
     </div>
