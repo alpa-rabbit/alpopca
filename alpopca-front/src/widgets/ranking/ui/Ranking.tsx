@@ -10,6 +10,7 @@ interface RankingItem {
 interface RankingProps {
   rankings: RankingItem[];
   currentUserRank?: RankingItem;
+  isLoading?: boolean;
 }
 
 interface RankingItemProps {
@@ -43,9 +44,21 @@ function RankingItemComponent({ rank, country, countryFlag, score, showMedal }: 
   );
 }
 
-export default function Ranking({ rankings, currentUserRank }: RankingProps) {
+export default function Ranking({ rankings, currentUserRank, isLoading }: RankingProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const topRank = rankings.length > 0 ? rankings[0] : null;
+
+  if (isLoading) {
+    return (
+      <div className='fixed bottom-0 left-0 right-0 z-20 pointer-events-none p-4'>
+        <div className='relative flex justify-center'>
+          <div className='flex flex-col items-center justify-center px-6 py-4 bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] pointer-events-auto'>
+            <span className='text-xs md:text-sm font-bold font-["Press_Start_2P"] text-black/50 text-center leading-relaxed animate-pulse'>LOADING...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!topRank) {
     return (
@@ -105,7 +118,7 @@ export default function Ranking({ rankings, currentUserRank }: RankingProps) {
                 <span className='text-xl'>{topRank.countryFlag}</span>
                 <span className='text-xs font-bold font-["Press_Start_2P"] text-primary'>{formatScore(topRank.score)}</span>
               </div>
-              <div className='flex gap-2 md:gap-4 items-center hidden sm:flex'>
+              <div className='hidden sm:flex gap-2 md:gap-4 items-center'>
                 {currentUserRank && (
                   <>
                     <span className='text-sm text-black/50 font-["Press_Start_2P"]'>...</span>

@@ -39,7 +39,7 @@ export function useRanking(userRegionCode?: string | null) {
   }));
 
   const currentUserRank = userRegionCode
-    ? (rankings.find((r) => r.country === getCountryDisplayName('', userRegionCode)) ?? null)
+    ? (rankings.find((_, index) => regionRankList[index]?.regionCode.name === userRegionCode) ?? null)
     : null;
 
   return { rankings, currentUserRank, isLoading };

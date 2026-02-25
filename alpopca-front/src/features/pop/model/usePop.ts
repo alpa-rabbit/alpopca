@@ -17,7 +17,10 @@ export function usePop() {
       if (data.regionCode) {
         setRegionCode(data.regionCode);
       }
-      void queryClient.invalidateQueries({ queryKey: qk.leaderboard() });
+      // isProcessed: false 면 서버에 반영 안 된 것 (rate limit 등) → 리더보드 갱신 불필요
+      if (data.isProcessed) {
+        void queryClient.invalidateQueries({ queryKey: qk.leaderboard() });
+      }
     },
   });
 
