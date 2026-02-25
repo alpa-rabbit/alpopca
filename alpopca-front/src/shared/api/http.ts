@@ -15,18 +15,21 @@ let tokenFetchFailedAt: number | null = null;
 const TOKEN_RETRY_INTERVAL_MS = 30_000; // 30초 후 재시도
 
 // pop API에서 newToken 갱신 시 사용
-export function updateAccessToken(token: string) {
+// expiresIn: JWT에 exp 필드 없을 경우 fallback (fetchToken에서 서버 응답값 전달)
+export function updateAccessToken(token: string, expiresIn?: number) {
   accessToken = token;
   try {
     const parts = token.split('.');
-    if (parts.length !== 3) {
-      tokenExpiry = null;
+    // JWT 형식 검증 (3파트 + base64url 문자 검증)
+    if (parts.length !== 3 || !/^[A-Za-z0-9\-_]*$/.test(parts[1])) {
+      tokenExpiry = expiresIn ? Math.floor(Date.now() / 1000) + expiresIn : null;
       return;
     }
-    const payload = JSON.parse(atob(parts[1])) as { exp?: number };
-    tokenExpiry = payload.exp ?? null;
+    const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'))) as { exp?: number };
+    // JWT exp 우선, 없으면 서버가 내려준 expiresIn 사용
+    tokenExpiry = payload.exp ?? (expiresIn ? Math.floor(Date.now() / 1000) + expiresIn : null);
   } catch {
-    tokenExpiry = null;
+    tokenExpiry = expiresIn ? Math.floor(Date.now() / 1000) + expiresIn : null;
   }
 }
 
@@ -51,8 +54,9 @@ async function fetchToken(): Promise<string | null> {
       tokenFetchFailedAt = Date.now();
       return null;
     }
-    tokenFetchFailedAt = null; // 성공 시 리셋
-    updateAccessToken(token);
+    tokenFetchFailedAt = null;
+    // expiresIn을 fallback으로 전달 (JWT exp 없는 경우 대비)
+    updateAccessToken(token, res.data.expiresIn);
     return token;
   } catch {
     tokenFetchFailedAt = Date.now();
