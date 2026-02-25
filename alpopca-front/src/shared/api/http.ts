@@ -11,7 +11,8 @@ export const http = ky.create({
 // 토큰 상태
 let accessToken: string | null = null;
 let tokenExpiry: number | null = null;
-let tokenFetchFailed = false;
+let tokenFetchFailedAt: number | null = null;
+const TOKEN_RETRY_INTERVAL_MS = 30_000; // 30초 후 재시도
 
 // pop API에서 newToken 갱신 시 사용
 export function updateAccessToken(token: string) {
@@ -34,18 +35,22 @@ interface TokenApiResponse {
 }
 
 async function fetchToken(): Promise<string | null> {
-  if (tokenFetchFailed) return null;
+  // 실패한 적 있으면 일정 시간 후 재시도
+  if (tokenFetchFailedAt !== null && Date.now() - tokenFetchFailedAt < TOKEN_RETRY_INTERVAL_MS) {
+    return null;
+  }
   try {
     const res = await ky.get(`${BASE_URL}api/v1/auth/token`).json<TokenApiResponse>();
     const token = res.data?.accessToken;
     if (!token) {
-      tokenFetchFailed = true;
+      tokenFetchFailedAt = Date.now();
       return null;
     }
+    tokenFetchFailedAt = null; // 성공 시 리셋
     updateAccessToken(token);
     return token;
   } catch {
-    tokenFetchFailed = true;
+    tokenFetchFailedAt = Date.now();
     return null;
   }
 }

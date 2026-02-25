@@ -11,6 +11,7 @@ interface RankingProps {
   rankings: RankingItem[];
   currentUserRank?: RankingItem;
   isLoading?: boolean;
+  isError?: boolean;
 }
 
 interface RankingItemProps {
@@ -44,9 +45,21 @@ function RankingItemComponent({ rank, country, countryFlag, score, showMedal }: 
   );
 }
 
-export default function Ranking({ rankings, currentUserRank, isLoading }: RankingProps) {
+export default function Ranking({ rankings, currentUserRank, isLoading, isError }: RankingProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const topRank = rankings.length > 0 ? rankings[0] : null;
+
+  if (isError) {
+    return (
+      <div className='fixed bottom-0 left-0 right-0 z-20 pointer-events-none p-4'>
+        <div className='relative flex justify-center'>
+          <div className='flex flex-col items-center justify-center px-6 py-4 bg-white border-4 border-red-400 shadow-[8px_8px_0px_0px_rgba(239,68,68,0.5)] pointer-events-auto'>
+            <span className='text-xs font-bold font-["Press_Start_2P"] text-red-500 text-center leading-relaxed'>⚠ LEADERBOARD OFFLINE</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

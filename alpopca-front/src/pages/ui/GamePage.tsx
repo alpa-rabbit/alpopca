@@ -7,7 +7,7 @@ import { useRanking } from '@/widgets/ranking/model/useRanking';
 
 export default function GamePage() {
   const { isPopping, popCount, regionCode, handlePop, handleStart, handleEnd } = usePop();
-  const { rankings, currentUserRank, isLoading: isRankingLoading } = useRanking(regionCode);
+  const { rankings, currentUserRank, isLoading: isRankingLoading, isError: isRankingError } = useRanking(regionCode);
 
   return (
     <div
@@ -45,6 +45,7 @@ export default function GamePage() {
           rankings={rankings}
           currentUserRank={currentUserRank ?? undefined}
           isLoading={isRankingLoading}
+          isError={isRankingError}
         />
       </div>
     </div>

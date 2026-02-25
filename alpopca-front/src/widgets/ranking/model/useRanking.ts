@@ -23,7 +23,7 @@ export interface RankingItem {
 }
 
 export function useRanking(userRegionCode?: string | null) {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: qk.leaderboard(),
     queryFn: getLeaderboard,
     refetchInterval: 30_000,
@@ -42,5 +42,5 @@ export function useRanking(userRegionCode?: string | null) {
     ? (rankings.find((_, index) => regionRankList[index]?.regionCode.name === userRegionCode) ?? null)
     : null;
 
-  return { rankings, currentUserRank, isLoading };
+  return { rankings, currentUserRank, isLoading, isError };
 }

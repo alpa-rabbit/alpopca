@@ -2,6 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { sendPop } from '@/shared/api/pop';
 import { qk } from '@/shared/api/queryKeys';
+import { playPopSound } from '@/shared/lib/sound';
 
 export function usePop() {
   const [isPopping, setIsPopping] = useState(false);
@@ -34,6 +35,7 @@ export function usePop() {
   const handlePop = useCallback(() => {
     setPopCount((prev) => prev + 1);
     pendingCount.current += 1;
+    playPopSound();
 
     if (debounceTimer.current) {
       clearTimeout(debounceTimer.current);
