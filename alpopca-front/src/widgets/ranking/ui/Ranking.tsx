@@ -12,6 +12,7 @@ interface RankingProps {
   currentUserRank?: RankingItem;
   isLoading?: boolean;
   isError?: boolean;
+  globalSum?: number | null;
 }
 
 interface RankingItemProps {
@@ -45,7 +46,7 @@ function RankingItemComponent({ rank, country, countryFlag, score, showMedal }: 
   );
 }
 
-export default function Ranking({ rankings, currentUserRank, isLoading, isError }: RankingProps) {
+export default function Ranking({ rankings, currentUserRank, isLoading, isError, globalSum }: RankingProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const topRank = rankings.length > 0 ? rankings[0] : null;
 
@@ -162,9 +163,16 @@ export default function Ranking({ rankings, currentUserRank, isLoading, isError 
             onMouseUp={(e) => e.stopPropagation()}
             className='flex items-center justify-between px-4 py-4 border-b-4 border-black cursor-pointer bg-primary/5 hover:bg-primary/10 transition-colors'
           >
-            <div className='flex items-center justify-center gap-2 flex-1'>
-              <span className='text-xl'>🏆</span>
-              <h2 className='text-sm md:text-base font-bold font-["Press_Start_2P"] text-black'>LEADERBOARD</h2>
+            <div className='flex flex-col items-center justify-center gap-1 flex-1'>
+              <div className='flex items-center gap-2'>
+                <span className='text-xl'>🏆</span>
+                <h2 className='text-sm md:text-base font-bold font-["Press_Start_2P"] text-black'>LEADERBOARD</h2>
+              </div>
+              {globalSum != null && (
+                <span className='text-[10px] font-["Press_Start_2P"] text-black/50'>
+                  WORLD: {globalSum.toLocaleString()} POPS
+                </span>
+              )}
             </div>
             <span className='text-sm font-bold font-["Press_Start_2P"] text-black shrink-0'>v</span>
           </div>

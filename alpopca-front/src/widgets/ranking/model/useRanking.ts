@@ -42,5 +42,7 @@ export function useRanking(userRegionCode?: string | null) {
     ? (rankings.find((_, index) => regionRankList[index]?.regionCode.name === userRegionCode) ?? null)
     : null;
 
-  return { rankings, currentUserRank, isLoading, isError };
+  const globalSum = data?.data?.globalSum ?? null;
+
+  return { rankings, currentUserRank, isLoading, isError, globalSum };
 }

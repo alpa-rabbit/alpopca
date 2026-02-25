@@ -8,7 +8,7 @@ import { useRanking } from '@/widgets/ranking/model/useRanking';
 
 export default function GamePage() {
   const { isPopping, popCount, regionCode, handlePop, handleStart, handleEnd } = usePop();
-  const { rankings, currentUserRank, isLoading: isRankingLoading, isError: isRankingError } = useRanking(regionCode);
+  const { rankings, currentUserRank, isLoading: isRankingLoading, isError: isRankingError, globalSum } = useRanking(regionCode);
 
   // 키보드 접근성: 스페이스바 / Enter 로 팝
   useEffect(() => {
@@ -72,6 +72,7 @@ export default function GamePage() {
           currentUserRank={currentUserRank ?? undefined}
           isLoading={isRankingLoading}
           isError={isRankingError}
+          globalSum={globalSum}
         />
       </div>
     </div>
