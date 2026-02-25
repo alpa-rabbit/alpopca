@@ -18,7 +18,12 @@ const TOKEN_RETRY_INTERVAL_MS = 30_000; // 30초 후 재시도
 export function updateAccessToken(token: string) {
   accessToken = token;
   try {
-    const payload = JSON.parse(atob(token.split('.')[1])) as { exp?: number };
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      tokenExpiry = null;
+      return;
+    }
+    const payload = JSON.parse(atob(parts[1])) as { exp?: number };
     tokenExpiry = payload.exp ?? null;
   } catch {
     tokenExpiry = null;

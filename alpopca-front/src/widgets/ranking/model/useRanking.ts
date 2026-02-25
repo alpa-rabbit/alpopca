@@ -38,9 +38,10 @@ export function useRanking(userRegionCode?: string | null) {
     score: entry.popCount,
   }));
 
-  const currentUserRank = userRegionCode
-    ? (rankings.find((_, index) => regionRankList[index]?.regionCode.name === userRegionCode) ?? null)
-    : null;
+  const currentUserRankIndex = userRegionCode
+    ? regionRankList.findIndex((entry) => entry.regionCode.name === userRegionCode)
+    : -1;
+  const currentUserRank = currentUserRankIndex >= 0 ? rankings[currentUserRankIndex] : null;
 
   const globalSum = data?.data?.globalSum ?? null;
 
