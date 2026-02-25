@@ -8,30 +8,41 @@ export const http = ky.create({
   prefixUrl: BASE_URL,
 });
 
-// 토큰 기반 인증 API 호출 (pop 등)
+// 토큰 상태
 let accessToken: string | null = null;
 let tokenExpiry: number | null = null;
 let tokenFetchFailed = false;
 
+// pop API에서 newToken 갱신 시 사용
+export function updateAccessToken(token: string) {
+  accessToken = token;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1])) as { exp?: number };
+    tokenExpiry = payload.exp ?? null;
+  } catch {
+    tokenExpiry = null;
+  }
+}
+
+interface TokenApiResponse {
+  success: boolean;
+  data: {
+    accessToken: string;
+    tokenType: string;
+    expiresIn: number;
+  };
+}
+
 async function fetchToken(): Promise<string | null> {
   if (tokenFetchFailed) return null;
   try {
-    const raw = await ky.get(`${BASE_URL}api/v1/auth/token`).text();
-    let token: string;
-    try {
-      const json = JSON.parse(raw) as Record<string, unknown>;
-      const candidate = json['token'] ?? json['accessToken'];
-      token = typeof candidate === 'string' ? candidate : raw;
-    } catch {
-      token = raw.trim();
+    const res = await ky.get(`${BASE_URL}api/v1/auth/token`).json<TokenApiResponse>();
+    const token = res.data?.accessToken;
+    if (!token) {
+      tokenFetchFailed = true;
+      return null;
     }
-    accessToken = token;
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1])) as { exp?: number };
-      tokenExpiry = payload.exp ?? null;
-    } catch {
-      tokenExpiry = null;
-    }
+    updateAccessToken(token);
     return token;
   } catch {
     tokenFetchFailed = true;
