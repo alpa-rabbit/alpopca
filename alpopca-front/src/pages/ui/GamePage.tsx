@@ -15,8 +15,8 @@ export default function GamePage() {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space' || e.code === 'Enter') {
         e.preventDefault();
-        handleStart();
-        handlePop();
+        handleStart(); // 꾹 누르는 동안 isPopping 유지
+        if (!e.repeat) handlePop(); // 처음 누를 때만 카운트 1번
       }
     };
     const onKeyUp = (e: KeyboardEvent) => {
