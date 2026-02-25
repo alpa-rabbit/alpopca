@@ -60,7 +60,7 @@ export default function GamePage() {
       <div className="pointer-events-auto relative z-20">
         <Header />
       </div>
-      <div className="absolute top-20 md:top-24 left-0 right-0 z-10 pointer-events-none flex justify-center">
+      <div className="absolute top-28 md:top-24 left-0 right-0 z-10 pointer-events-none flex justify-center">
         <PopCounter popCount={popCount} />
       </div>
       <div className="w-full h-screen flex items-center justify-center">
