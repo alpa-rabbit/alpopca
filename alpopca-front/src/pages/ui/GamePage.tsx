@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import PopArea from '@/features/pop/ui/PopArea';
 import PopCounter from '@/features/pop/ui/PopCounter';
 import { usePop } from '@/features/pop/model/usePop';
@@ -9,9 +10,34 @@ export default function GamePage() {
   const { isPopping, popCount, regionCode, handlePop, handleStart, handleEnd } = usePop();
   const { rankings, currentUserRank, isLoading: isRankingLoading, isError: isRankingError } = useRanking(regionCode);
 
+  // 키보드 접근성: 스페이스바 / Enter 로 팝
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'Enter') {
+        e.preventDefault();
+        handleStart();
+        handlePop();
+      }
+    };
+    const onKeyUp = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'Enter') {
+        handleEnd();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+    };
+  }, [handleStart, handlePop, handleEnd]);
+
   return (
     <div
       className="relative h-screen overflow-hidden bg-transparent cursor-pointer touch-none select-none"
+      role="button"
+      tabIndex={0}
+      aria-label="Tap to pop the alpaca"
       onClick={handlePop}
       onMouseDown={handleStart}
       onMouseUp={handleEnd}
