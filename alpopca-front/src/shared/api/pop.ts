@@ -1,4 +1,4 @@
-import { http } from './http';
+import { authHttp as http } from './http';
 
 export interface PopResponse {
   count: number;

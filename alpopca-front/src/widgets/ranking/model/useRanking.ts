@@ -10,23 +10,9 @@ const COUNTRY_NAME_OVERRIDES: Record<string, string> = {
   GB: 'UK',
 };
 
-function getCountryName(regionCode: string): string {
+function getCountryDisplayName(englishName: string, regionCode: string): string {
   const code = regionCode.toUpperCase();
-  if (code in COUNTRY_NAME_OVERRIDES) {
-    return COUNTRY_NAME_OVERRIDES[code];
-  }
-  try {
-    const names = new Intl.DisplayNames(['en'], { type: 'region' });
-    return (names.of(code) ?? code).toUpperCase();
-  } catch {
-    return code;
-  }
-}
-
-function getCountryFlag(regionCode: string): string {
-  return Array.from(regionCode.toUpperCase())
-    .map((char) => String.fromCodePoint(0x1f1e6 + char.charCodeAt(0) - 65))
-    .join('');
+  return (COUNTRY_NAME_OVERRIDES[code] ?? englishName).toUpperCase();
 }
 
 export interface RankingItem {
@@ -43,15 +29,17 @@ export function useRanking(userRegionCode?: string | null) {
     refetchInterval: 30_000,
   });
 
-  const rankings: RankingItem[] = (data ?? []).map((entry, index) => ({
-    rank: entry.rank ?? index + 1,
-    country: getCountryName(entry.regionCode),
-    countryFlag: getCountryFlag(entry.regionCode),
-    score: entry.count,
+  const regionRankList = data?.data?.regionRankList ?? [];
+
+  const rankings: RankingItem[] = regionRankList.map((entry, index) => ({
+    rank: index + 1,
+    country: getCountryDisplayName(entry.englishName, entry.regionCode.name),
+    countryFlag: entry.flagEmoji,
+    score: entry.popCount,
   }));
 
   const currentUserRank = userRegionCode
-    ? (rankings.find((r) => r.country === getCountryName(userRegionCode)) ?? null)
+    ? (rankings.find((r) => r.country === getCountryDisplayName('', userRegionCode)) ?? null)
     : null;
 
   return { rankings, currentUserRank, isLoading };
