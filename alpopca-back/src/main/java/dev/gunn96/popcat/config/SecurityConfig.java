@@ -19,8 +19,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -40,8 +38,8 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource(CorsProperties corsProperties) {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(corsProperties.allowedOriginPatterns());
-        config.setAllowedMethods(List.of("GET", "POST"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        config.setAllowedMethods(corsProperties.allowedMethods());
+        config.setAllowedHeaders(corsProperties.allowedHeaders());
         config.setAllowCredentials(true);
         config.setMaxAge(corsProperties.maxAge());
 
@@ -56,7 +54,6 @@ public class SecurityConfig {
                                                    JwtAuthenticationFilter jwtAuthenticationFilter, CorsProperties corsProperties) throws Exception {
 
         return http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource(corsProperties)))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(configurer ->
                         configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
