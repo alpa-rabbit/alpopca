@@ -53,3 +53,5 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+jwt:
+  secret: testSecretKeyThatIsLongEnoughForHmacSha256AlgorithmRequirement
