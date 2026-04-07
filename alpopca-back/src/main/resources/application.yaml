@@ -1,0 +1,57 @@
+server:
+  port: 50000
+spring:
+  flyway:
+    enabled: true
+    url: ${DB_URL}
+    user: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    baseline-on-migrate: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: false
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME}
+    url: ${DB_URL}
+    password: ${DB_PASSWORD}
+jwt:
+  secret: ${JWT_SECRET}
+  server-address: 127.0.0.1
+  expiration-seconds: 60
+geoip:
+  database:
+    path: classpath:geoip/GeoLite2-Country.mmdb
+cors:
+  allowed-origin-patterns:
+    - "https://alpopca.world"
+  max-age: 3600
+logging:
+  file:
+    name: /var/log/alpopca/application.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30
+      total-size-cap: 500MB
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  flyway:
+    enabled: false
+  datasource:
+    url: jdbc:tc:postgresql:13-alpine:///testdb
+    username: test
+    password: test
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+jwt:
+  secret: testSecretKeyThatIsLongEnoughForHmacSha256AlgorithmRequirement
