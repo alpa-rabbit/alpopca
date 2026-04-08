@@ -30,6 +30,12 @@ cors:
   allowed-origin-patterns:
     - "https://alpopca.world"
   max-age: 3600
+  allowed-methods:
+    - "GET"
+    - "POST"
+  allowed-headers:
+    - "Authorization"
+    - "Content-Type"
 logging:
   file:
     name: /var/log/alpopca/application.log
