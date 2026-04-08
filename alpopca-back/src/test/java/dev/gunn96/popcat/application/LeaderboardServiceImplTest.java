@@ -29,13 +29,13 @@ class LeaderboardServiceImplTest {
         @DisplayName("리더보드 조회 시 정렬된 리더보드를 반환한다")
         void getLeaderboard() {
             List<RegionStatsEntity> unsortedRegionStatList = List.of(
-                    createRegionStat(1L,"KR", 100L),
+                    createRegionStat(4L,"FR", 5000L),
                     createRegionStat(2L,"US", 500L),
                     createRegionStat(3L, "JP", 200L),
-                    createRegionStat(4L,"FR", 5000L)
+                    createRegionStat(1L,"KR", 100L)
             );
 
-            given(regionStatsRepository.findAll()).willReturn(unsortedRegionStatList);
+            given(regionStatsRepository.findAllByOrderByTotalClicksDesc()).willReturn(unsortedRegionStatList);
             List<RegionStats> sortedRegionList = leaderboardService.getLeaderboard();
 
             assertThat(sortedRegionList).extracting(
