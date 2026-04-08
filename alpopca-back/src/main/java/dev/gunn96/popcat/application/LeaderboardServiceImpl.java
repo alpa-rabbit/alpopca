@@ -17,11 +17,8 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
     @Override
     public List<RegionStats> getLeaderboard() {
-
-        return regionStatsRepository.findAll().stream()
-                .map(RegionStatsEntityMapper::toDomain)
-                .sorted((a, b) -> Long.compare(b.getPopCount().value(), a.getPopCount().value()))
-                .toList();
+        return regionStatsRepository.findAllByOrderByTotalClicksDesc()
+                .stream().map(RegionStatsEntityMapper::toDomain).toList();
     }
 
     public Long calculateGlobalSum(List<RegionStats> allRegionStatList) {
