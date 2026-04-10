@@ -62,6 +62,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/v1/auth/token").permitAll()
                         .requestMatchers("/api/v1/leaderboard/**").permitAll()
                         .requestMatchers("/api/v1/pop/**").authenticated()
@@ -69,7 +70,6 @@ public class SecurityConfig {
                 )
                 .authenticationProvider(jwtAuthenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-//                .securityMatcher("/api/v1/pop/**")
                 .build();
     }
 }
