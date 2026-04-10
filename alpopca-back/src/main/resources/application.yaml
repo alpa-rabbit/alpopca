@@ -19,6 +19,19 @@ spring:
     username: ${DB_USERNAME}
     url: ${DB_URL}
     password: ${DB_PASSWORD}
+management:
+  health:
+    redis:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus, metrics
+  endpoint:
+    health:
+      show-details: always
+  server:
+    port: 50001
 jwt:
   secret: ${JWT_SECRET}
   server-address: 127.0.0.1

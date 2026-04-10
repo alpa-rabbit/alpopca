@@ -34,6 +34,7 @@ dependencies {
     implementation 'org.mapstruct:mapstruct:1.6.3'
     implementation 'com.maxmind.geoip2:geoip2:4.2.1'
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
@@ -48,6 +49,7 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.testcontainers:postgresql'
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
