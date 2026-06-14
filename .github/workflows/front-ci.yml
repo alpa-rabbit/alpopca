@@ -35,7 +35,9 @@ jobs:
         run: yarn lint
 
       - name: Build
-        run: yarn build
+        run: |
+          echo "VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}" > .env.production.local
+          yarn build
 
       - name: Upload build artifact
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
