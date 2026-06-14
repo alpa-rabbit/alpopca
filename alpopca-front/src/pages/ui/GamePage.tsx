@@ -1,15 +1,43 @@
+import { useEffect } from 'react';
 import PopArea from '@/features/pop/ui/PopArea';
 import PopCounter from '@/features/pop/ui/PopCounter';
 import { usePop } from '@/features/pop/model/usePop';
 import Header from '@/widgets/header/ui/Header';
 import Ranking from '@/widgets/ranking/ui/Ranking';
+import { useRanking } from '@/widgets/ranking/model/useRanking';
 
 export default function GamePage() {
-  const { isPopping, popCount, handlePop, handleStart, handleEnd } = usePop();
+  const { isPopping, popCount, regionCode, handlePop, handleStart, handleEnd } = usePop();
+  const { rankings, currentUserRank, isLoading: isRankingLoading, isError: isRankingError, globalSum } = useRanking(regionCode);
+
+  // 키보드 접근성: 스페이스바 / Enter 로 팝
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'Enter') {
+        e.preventDefault();
+        handleStart(); // 꾹 누르는 동안 isPopping 유지
+        if (!e.repeat) handlePop(); // 처음 누를 때만 카운트 1번
+      }
+    };
+    const onKeyUp = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'Enter') {
+        handleEnd();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+    };
+  }, [handleStart, handlePop, handleEnd]);
 
   return (
     <div
       className="relative h-screen overflow-hidden bg-transparent cursor-pointer touch-none select-none"
+      role="button"
+      tabIndex={0}
+      aria-label="Tap to pop the alpaca"
       onClick={handlePop}
       onMouseDown={handleStart}
       onMouseUp={handleEnd}
@@ -32,7 +60,7 @@ export default function GamePage() {
       <div className="pointer-events-auto relative z-20">
         <Header />
       </div>
-      <div className="absolute top-16 md:top-16 left-0 right-0 z-10 pointer-events-none flex justify-center">
+      <div className="absolute top-28 md:top-24 left-0 right-0 z-10 pointer-events-none flex justify-center">
         <PopCounter popCount={popCount} />
       </div>
       <div className="w-full h-screen flex items-center justify-center">
@@ -40,22 +68,13 @@ export default function GamePage() {
       </div>
       <div className="pointer-events-auto relative z-20">
         <Ranking
-          rankings={[
-            { rank: 1, country: 'THAILAND', countryFlag: '🇹🇭', score: 125404416012 },
-            { rank: 2, country: 'HONG KONG', countryFlag: '🇭🇰', score: 123553091341 },
-            { rank: 3, country: 'TAIWAN', countryFlag: '🇹🇼', score: 121650047765 },
-            { rank: 4, country: 'JAPAN', countryFlag: '🇯🇵', score: 108901570854 },
-            { rank: 5, country: 'KOREA', countryFlag: '🇰🇷', score: 30902310534 },
-            { rank: 6, country: 'MALAYSIA', countryFlag: '🇲🇾', score: 24310944658 },
-            { rank: 7, country: 'SAUDI ARABIA', countryFlag: '🇸🇦', score: 11545777215 },
-            { rank: 8, country: 'USA', countryFlag: '🇺🇸', score: 10988649175 },
-            { rank: 9, country: 'INDONESIA', countryFlag: '🇮🇩', score: 10221377047 },
-            { rank: 10, country: 'FINLAND', countryFlag: '🇫🇮', score: 9349985690 },
-          ]}
-          currentUserRank={{ rank: 5, country: 'KOREA', countryFlag: '🇰🇷', score: 30902310534 }}
+          rankings={rankings}
+          currentUserRank={currentUserRank ?? undefined}
+          isLoading={isRankingLoading}
+          isError={isRankingError}
+          globalSum={globalSum}
         />
       </div>
     </div>
   );
 }
-

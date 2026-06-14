@@ -10,6 +10,9 @@ interface RankingItem {
 interface RankingProps {
   rankings: RankingItem[];
   currentUserRank?: RankingItem;
+  isLoading?: boolean;
+  isError?: boolean;
+  globalSum?: number | null;
 }
 
 interface RankingItemProps {
@@ -43,9 +46,33 @@ function RankingItemComponent({ rank, country, countryFlag, score, showMedal }: 
   );
 }
 
-export default function Ranking({ rankings, currentUserRank }: RankingProps) {
+export default function Ranking({ rankings, currentUserRank, isLoading, isError, globalSum }: RankingProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const topRank = rankings.length > 0 ? rankings[0] : null;
+
+  if (isError) {
+    return (
+      <div className='fixed bottom-0 left-0 right-0 z-20 pointer-events-none p-4'>
+        <div className='relative flex justify-center'>
+          <div className='flex flex-col items-center justify-center px-6 py-4 bg-white border-4 border-red-400 shadow-[8px_8px_0px_0px_rgba(239,68,68,0.5)] pointer-events-auto'>
+            <span className='text-xs font-bold font-["Press_Start_2P"] text-red-500 text-center leading-relaxed'>⚠ LEADERBOARD OFFLINE</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className='fixed bottom-0 left-0 right-0 z-20 pointer-events-none p-4'>
+        <div className='relative flex justify-center'>
+          <div className='flex flex-col items-center justify-center px-6 py-4 bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] pointer-events-auto'>
+            <span className='text-xs md:text-sm font-bold font-["Press_Start_2P"] text-black/50 text-center leading-relaxed animate-pulse'>LOADING...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!topRank) {
     return (
@@ -105,7 +132,7 @@ export default function Ranking({ rankings, currentUserRank }: RankingProps) {
                 <span className='text-xl'>{topRank.countryFlag}</span>
                 <span className='text-xs font-bold font-["Press_Start_2P"] text-primary'>{formatScore(topRank.score)}</span>
               </div>
-              <div className='flex gap-2 md:gap-4 items-center hidden sm:flex'>
+              <div className='hidden sm:flex gap-2 md:gap-4 items-center'>
                 {currentUserRank && (
                   <>
                     <span className='text-sm text-black/50 font-["Press_Start_2P"]'>...</span>
@@ -136,9 +163,16 @@ export default function Ranking({ rankings, currentUserRank }: RankingProps) {
             onMouseUp={(e) => e.stopPropagation()}
             className='flex items-center justify-between px-4 py-4 border-b-4 border-black cursor-pointer bg-primary/5 hover:bg-primary/10 transition-colors'
           >
-            <div className='flex items-center justify-center gap-2 flex-1'>
-              <span className='text-xl'>🏆</span>
-              <h2 className='text-sm md:text-base font-bold font-["Press_Start_2P"] text-black'>LEADERBOARD</h2>
+            <div className='flex flex-col items-center justify-center gap-1 flex-1'>
+              <div className='flex items-center gap-2'>
+                <span className='text-xl'>🏆</span>
+                <h2 className='text-sm md:text-base font-bold font-["Press_Start_2P"] text-black'>LEADERBOARD</h2>
+              </div>
+              {globalSum != null && (
+                <span className='text-[10px] font-["Press_Start_2P"] text-black/50'>
+                  WORLD: {globalSum.toLocaleString()} POPS
+                </span>
+              )}
             </div>
             <span className='text-sm font-bold font-["Press_Start_2P"] text-black shrink-0'>v</span>
           </div>
